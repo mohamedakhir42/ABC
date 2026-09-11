@@ -1,0 +1,47 @@
+name: Build Excel AI Windows
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build Windows EXE
+        run: |
+          pyinstaller --noconfirm --clean --windowed --name "Excel AI" app.py
+
+      - name: Copy application files
+        shell: powershell
+        run: |
+          Copy-Item "template.docx" "dist/Excel AI/" -Force
+          Copy-Item "example_clients.xlsx" "dist/Excel AI/" -Force
+
+      - name: Create ZIP
+        shell: powershell
+        run: |
+          Compress-Archive -Path "dist/Excel AI/*" -DestinationPath "Excel-AI-Windows.zip"
+
+      - name: Upload Windows application
+        uses: actions/upload-artifact@v4
+        with:
+          name: Excel-AI-Windows
+          path: Excel-AI-Windows.zip
