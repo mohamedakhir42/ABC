@@ -33,7 +33,7 @@ jobs:
         shell: powershell
         run: |
           Copy-Item "template.docx" "dist/Excel AI/" -Force
-          Copy-Item "example_clients.xlsx" "dist/Excel AI/" -Force
+          Copy-Item "exemple_clients.xlsx" "dist/Excel AI/" -Force
 
       - name: Create ZIP
         shell: powershell
